@@ -1,0 +1,17 @@
+[project]
+name = "constrained-icp-py"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "numpy>=2.3.4",
+    "open3d>=0.19.0",
+    "scipy>=1.16.2",
+    "transforms3d>=0.4.2",
+]
+
+[dependency-groups]
+dev = [
+    "pybind11-stubgen>=2.5.5",
+]
