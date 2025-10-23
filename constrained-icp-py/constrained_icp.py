@@ -1,6 +1,5 @@
 import open3d as o3d
 import numpy as np
-# import transformations as tr
 from scipy.optimize import least_squares
 from transforms3d.euler import euler2mat
 
@@ -11,6 +10,7 @@ translation_axis2 = np.array([0, 1, 0], dtype=float)
 
 def rotation_matrix(angle, rotation_axis):
     rot_angle = rotation_axis * angle
+    
 
     M = np.eye(4)
     M[:3, :3] = euler2mat(*np.deg2rad(rot_angle))
@@ -18,7 +18,7 @@ def rotation_matrix(angle, rotation_axis):
 
 
 def point_plane_residual(x: np.ndarray, base_transform: np.ndarray,
-                         pcd_source: o3d.PointCloud, pcd_target: o3d.PointCloud, kdtree_target: o3d.KDTreeFlann,
+                         pcd_source, pcd_target, kdtree_target,
                          max_correspond_dist):
     assert pcd_target.has_normals()
 
@@ -54,11 +54,11 @@ def point_plane_residual(x: np.ndarray, base_transform: np.ndarray,
     return residuals
 
 
-def cicp(pcd_source: o3d.PointCloud, pcd_target: o3d.PointCloud, base_transform: np.ndarray,
+def cicp(pcd_source, pcd_target, base_transform: np.ndarray,
          max_correspond_dist_coarse, max_correspond_dist_fine):
-    kdtree = o3d.KDTreeFlann(pcd_target)
+    kdtree = o3d.geometry.KDTreeFlann(pcd_target)
     if not pcd_target.has_normals():
-        o3d.estimate_normals(pcd_target, search_param=o3d.KDTreeSearchParamHybrid(radius=0.1, max_nn=30))
+        pcd_target.estimate_normals(search_param=o3d.geometry.KDTreeSearchParamHybrid(radius=0.1, max_nn=30))
 
     x0 = np.array([0, 0, 0], dtype=float)
     result = least_squares(
